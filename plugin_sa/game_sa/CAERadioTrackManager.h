@@ -8,6 +8,7 @@
 
 #include "PluginBase.h"
 #include "CAEVehicleAudioEntity.h"
+#include "eBassSetting.h"
 
 struct PLUGIN_API tRadioSettings {
     int m_djIndex[4];
@@ -83,89 +84,128 @@ VALIDATE_SIZE(tMusicTrackHistory, 0x14);
 
 class PLUGIN_API CAERadioTrackManager {
 public:
-    unsigned char field_0;
-    unsigned char field_1;
-    unsigned char field_2;
-    unsigned char field_3;
-    unsigned char field_4;
-    unsigned char field_5;
-    bool m_bRetuneJustStarted;
-    bool m_bRadioAutoSelect;
-    char field_8[14];
-    unsigned char m_nMonthDay;
-    unsigned char m_nClockHours;
-    int m_anPlayerStats[14];
+    bool m_bInitialised;                 // was field_0
+    bool m_bDisplayStationName;          // was field_1
+    char m_prev;                         // was field_2
+    bool m_bEnabledInPauseMode;          // was field_3
+    bool m_bBassEnhance;                 // was field_4
+    bool m_bPauseMode;                   // was field_5
+    bool m_bRetuneJustStarted;           
+    bool m_bRadioAutoSelect;             
+    char m_nTracksInARow[14];            // was field_8[14]
+    unsigned char m_nSavedGameClockDays; // was m_nMonthDay
+    unsigned char m_nSavedGameClockHours;// was m_nClockHours
+    int m_aListenTimes[14];              // was m_anPlayerStats[14]
     unsigned int m_nTimeRadioStationRetuned;
     unsigned int m_nTimeToDisplayRadioName;
-    int field_58;
-    int field_5C;
-    int field_60;
-    int field_64;
-    int field_68;
-    int m_nStationsListed;
-    int m_nStationsListDown;
-    unsigned long field_74;
-    unsigned long field_78;
-    unsigned long field_7C;
-    unsigned long field_80;
-    unsigned long field_84;
-    tRadioSettings m_TempSettings;
-    tRadioSettings m_Settings;
+    unsigned int m_nSavedTimeMs;         // was field_58
+    unsigned int m_nRetuneStartedTime;   // was field_5C
+    int field_60;                        
+    int m_HwClientHandle;                // was field_64
+    int m_nMode;                         // was field_68
+    int m_nStationsListed;               
+    int m_nStationsListDown;             
+    int m_nSavedRadioStationId;          // was field_74
+    int m_iRadioStationMenuRequest;      // was field_78
+    int m_iRadioStationScriptRequest;    // was field_7C
+    unsigned long m_f80;                 // was field_80
+    unsigned long m_f84;                 // was field_84
+    tRadioSettings m_RequestedSettings;  // was m_TempSettings
+    tRadioSettings m_ActiveSettings;
     tRadioStationData m_RadioStationsData[13];
     unsigned char gap33C[12];
     char field_348[32];
     unsigned long field_368;
-    unsigned char field_36C;
+    unsigned char m_nUserTrackPlayMode;  // was field_36C
     char field_36D[3];
 
-public:
     bool IsVehicleRadioActive();
-    char *GetRadioStationName(signed char id);
-    void StartRadio(int stationId, float bass, int arg, char unused);
+    char* GetRadioStationName(signed char id);
+    void StartRadio(eRadioID id, eBassSetting bassSetting, float bassGain, bool skipTrack);
+    void StartRadio(const tVehicleAudioSettings& settings);
     void StopRadio(tVehicleAudioSettings* settings, char arg);
 
     static void Load();
     static void Save();
 
+    bool Initialise(int channelId);
+    void InitialiseRadioStationID(eRadioID id);
+    void Reset();
+    static void ResetStatistics();
+    bool IsRadioOn() const;
+    bool HasRadioRetuneJustStarted() const;
+    eRadioID GetCurrentRadioStationID() const;
+    int* GetRadioStationListenTimes();
+    void SetRadioAutoRetuneOnOff(bool enable);
+    void SetBassEnhanceOnOff(bool enable);
+    void SetBassSetting(eBassSetting bassSetting, float bassGrain);
+    void RetuneRadio(eRadioID id);
+    void DisplayRadioStationName();
+    void GetRadioStationNameKey(eRadioID id, char* outStr);
+    void StartTrackPlayback();
+    void UpdateRadioVolumes();
+    void PlayRadioAnnouncement(unsigned int);
+    void Service(int playTime);
+    void CheckForStationRetuneDuringPause();
+    void CheckForPause();
+    static char ChooseTalkRadioShow();
+    static void CheckForMissionStatsChanges();
+
     // 11 structures
     static tMusicTrackHistory *m_nMusicTrackIndexHistory;
+
+protected:
+    void CheckForStationRetune();
+    void AddMusicTrackIndexToHistory(eRadioID id, char trackIndex);
+    void AddIdentIndexToHistory(eRadioID id, char trackIndex);
+    void AddAdvertIndexToHistory(eRadioID id, char trackIndex);
+    void AddDJBanterIndexToHistory(eRadioID id, char trackIndex);
+    void ChooseTracksForStation(eRadioID id);
+    int ChooseIdentIndex(eRadioID id);
+    int ChooseAdvertIndex(eRadioID id);
+    int ChooseDJBanterIndex(eRadioID id);
+    int ChooseDJBanterIndexFromList(eRadioID id, int** list);
+    char ChooseMusicTrackIndex(eRadioID id);
+    void CheckForTrackConcatenation();
+    bool QueueUpTracksForStation(eRadioID id, char* iTrackCount, char radioState, tRadioSettings& settings);
+    bool TrackRadioStation(eRadioID id, bool skipTrack);
 };
-VALIDATE_OFFSET(CAERadioTrackManager, field_0, 0x0);
-VALIDATE_OFFSET(CAERadioTrackManager, field_1, 0x1);
-VALIDATE_OFFSET(CAERadioTrackManager, field_2, 0x2);
-VALIDATE_OFFSET(CAERadioTrackManager, field_3, 0x3);
-VALIDATE_OFFSET(CAERadioTrackManager, field_4, 0x4);
-VALIDATE_OFFSET(CAERadioTrackManager, field_5, 0x5);
+
+VALIDATE_OFFSET(CAERadioTrackManager, m_bInitialised, 0x0);
+VALIDATE_OFFSET(CAERadioTrackManager, m_bDisplayStationName, 0x1);
+VALIDATE_OFFSET(CAERadioTrackManager, m_prev, 0x2);
+VALIDATE_OFFSET(CAERadioTrackManager, m_bEnabledInPauseMode, 0x3);
+VALIDATE_OFFSET(CAERadioTrackManager, m_bBassEnhance, 0x4);
+VALIDATE_OFFSET(CAERadioTrackManager, m_bPauseMode, 0x5);
 VALIDATE_OFFSET(CAERadioTrackManager, m_bRetuneJustStarted, 0x6);
 VALIDATE_OFFSET(CAERadioTrackManager, m_bRadioAutoSelect, 0x7);
-VALIDATE_OFFSET(CAERadioTrackManager, field_8, 0x8);
-VALIDATE_OFFSET(CAERadioTrackManager, m_nMonthDay, 0x16);
-VALIDATE_OFFSET(CAERadioTrackManager, m_nClockHours, 0x17);
-VALIDATE_OFFSET(CAERadioTrackManager, m_anPlayerStats, 0x18);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nTracksInARow, 0x8);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nSavedGameClockDays, 0x16);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nSavedGameClockHours, 0x17);
+VALIDATE_OFFSET(CAERadioTrackManager, m_aListenTimes, 0x18);
 VALIDATE_OFFSET(CAERadioTrackManager, m_nTimeRadioStationRetuned, 0x50);
 VALIDATE_OFFSET(CAERadioTrackManager, m_nTimeToDisplayRadioName, 0x54);
-VALIDATE_OFFSET(CAERadioTrackManager, field_58, 0x58);
-VALIDATE_OFFSET(CAERadioTrackManager, field_5C, 0x5C);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nSavedTimeMs, 0x58);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nRetuneStartedTime, 0x5C);
 VALIDATE_OFFSET(CAERadioTrackManager, field_60, 0x60);
-VALIDATE_OFFSET(CAERadioTrackManager, field_64, 0x64);
-VALIDATE_OFFSET(CAERadioTrackManager, field_68, 0x68);
+VALIDATE_OFFSET(CAERadioTrackManager, m_HwClientHandle, 0x64);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nMode, 0x68);
 VALIDATE_OFFSET(CAERadioTrackManager, m_nStationsListed, 0x6C);
 VALIDATE_OFFSET(CAERadioTrackManager, m_nStationsListDown, 0x70);
-VALIDATE_OFFSET(CAERadioTrackManager, field_74, 0x74);
-VALIDATE_OFFSET(CAERadioTrackManager, field_78, 0x78);
-VALIDATE_OFFSET(CAERadioTrackManager, field_7C, 0x7C);
-VALIDATE_OFFSET(CAERadioTrackManager, field_80, 0x80);
-VALIDATE_OFFSET(CAERadioTrackManager, field_84, 0x84);
-VALIDATE_OFFSET(CAERadioTrackManager, m_TempSettings, 0x88);
-VALIDATE_OFFSET(CAERadioTrackManager, m_Settings, 0xC4);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nSavedRadioStationId, 0x74);
+VALIDATE_OFFSET(CAERadioTrackManager, m_iRadioStationMenuRequest, 0x78);
+VALIDATE_OFFSET(CAERadioTrackManager, m_iRadioStationScriptRequest, 0x7C);
+VALIDATE_OFFSET(CAERadioTrackManager, m_f80, 0x80);
+VALIDATE_OFFSET(CAERadioTrackManager, m_f84, 0x84);
+VALIDATE_OFFSET(CAERadioTrackManager, m_RequestedSettings, 0x88);
+VALIDATE_OFFSET(CAERadioTrackManager, m_ActiveSettings, 0xC4);
 VALIDATE_OFFSET(CAERadioTrackManager, m_RadioStationsData, 0x100);
 VALIDATE_OFFSET(CAERadioTrackManager, gap33C, 0x33C);
 VALIDATE_OFFSET(CAERadioTrackManager, field_348, 0x348);
 VALIDATE_OFFSET(CAERadioTrackManager, field_368, 0x368);
-VALIDATE_OFFSET(CAERadioTrackManager, field_36C, 0x36C);
+VALIDATE_OFFSET(CAERadioTrackManager, m_nUserTrackPlayMode, 0x36C);
 VALIDATE_OFFSET(CAERadioTrackManager, field_36D, 0x36D);
 VALIDATE_SIZE(CAERadioTrackManager, 0x370);
 
 extern CAERadioTrackManager &AERadioTrackManager;
-
 VALIDATE_SIZE(CAERadioTrackManager, 0x370);
