@@ -8,7 +8,7 @@
 
 #include "PluginBase.h"
 #include "CAEVehicleAudioEntity.h"
-#include "eBassSetting.h"
+#include "enums\eBassSetting.h"
 
 struct PLUGIN_API tRadioSettings {
     int m_djIndex[4];
