@@ -53,7 +53,7 @@ struct PLUGIN_API tRadioStationData {
     int field_8;
     int m_nTimeRetuneStopped;
     int lastPlayingTime;
-    int trackPlayTime;
+    int m_trackPlayTime;
     int field_18;
     int field_1C;
     int field_20;
