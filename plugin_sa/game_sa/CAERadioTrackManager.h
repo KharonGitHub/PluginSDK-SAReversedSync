@@ -153,11 +153,6 @@ public:
     void CheckForPause();
     static char ChooseTalkRadioShow();
     static void CheckForMissionStatsChanges();
-
-    // 11 structures
-    static tMusicTrackHistory *m_nMusicTrackIndexHistory;
-
-protected:
     void CheckForStationRetune();
     void AddMusicTrackIndexToHistory(eRadioID id, char trackIndex);
     void AddIdentIndexToHistory(eRadioID id, char trackIndex);
@@ -172,6 +167,10 @@ protected:
     void CheckForTrackConcatenation();
     bool QueueUpTracksForStation(eRadioID id, char* iTrackCount, char radioState, tRadioSettings& settings);
     bool TrackRadioStation(eRadioID id, bool skipTrack);
+
+    // 11 structures
+    static tMusicTrackHistory *m_nMusicTrackIndexHistory;
+
 };
 
 VALIDATE_OFFSET(CAERadioTrackManager, m_bInitialised, 0x0);
