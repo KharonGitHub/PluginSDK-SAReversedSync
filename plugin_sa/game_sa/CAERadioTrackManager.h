@@ -2,6 +2,9 @@
     Plugin-SDK (Grand Theft Auto San Andreas) header file
     Authors: GTA Community. See more here
     https://github.com/DK22Pac/plugin-sdk
+
+    Based on definitions from the GTA SA Reversed project.
+    https://github.com/gta-reversed/gta-reversed
     Do not delete this comment block. Respect others' work!
 */
 #pragma once
@@ -84,39 +87,39 @@ VALIDATE_SIZE(tMusicTrackHistory, 0x14);
 
 class PLUGIN_API CAERadioTrackManager {
 public:
-    bool m_bInitialised;                 // was field_0
-    bool m_bDisplayStationName;          // was field_1
-    char m_prev;                         // was field_2
-    bool m_bEnabledInPauseMode;          // was field_3
-    bool m_bBassEnhance;                 // was field_4
-    bool m_bPauseMode;                   // was field_5
+    bool m_bInitialised;                 
+    bool m_bDisplayStationName;          
+    char m_prev;                         
+    bool m_bEnabledInPauseMode;          
+    bool m_bBassEnhance;                 
+    bool m_bPauseMode;                   
     bool m_bRetuneJustStarted;           
     bool m_bRadioAutoSelect;             
-    char m_nTracksInARow[14];            // was field_8[14]
-    unsigned char m_nSavedGameClockDays; // was m_nMonthDay
-    unsigned char m_nSavedGameClockHours;// was m_nClockHours
-    int m_aListenTimes[14];              // was m_anPlayerStats[14]
+    char m_nTracksInARow[14];            
+    unsigned char m_nSavedGameClockDays; 
+    unsigned char m_nSavedGameClockHours;
+    int m_aListenTimes[14];              
     unsigned int m_nTimeRadioStationRetuned;
     unsigned int m_nTimeToDisplayRadioName;
-    unsigned int m_nSavedTimeMs;         // was field_58
-    unsigned int m_nRetuneStartedTime;   // was field_5C
+    unsigned int m_nSavedTimeMs;         
+    unsigned int m_nRetuneStartedTime;   
     int field_60;                        
-    int m_HwClientHandle;                // was field_64
-    int m_nMode;                         // was field_68
+    int m_HwClientHandle;                
+    int m_nMode;                         
     int m_nStationsListed;               
     int m_nStationsListDown;             
-    int m_nSavedRadioStationId;          // was field_74
-    int m_iRadioStationMenuRequest;      // was field_78
-    int m_iRadioStationScriptRequest;    // was field_7C
-    unsigned long m_f80;                 // was field_80
-    unsigned long m_f84;                 // was field_84
-    tRadioSettings m_RequestedSettings;  // was m_TempSettings
+    int m_nSavedRadioStationId;          
+    int m_iRadioStationMenuRequest;      
+    int m_iRadioStationScriptRequest;    
+    unsigned long m_f80;                 
+    unsigned long m_f84;                 
+    tRadioSettings m_RequestedSettings;
     tRadioSettings m_ActiveSettings;
     tRadioStationData m_RadioStationsData[13];
     unsigned char gap33C[12];
     char field_348[32];
     unsigned long field_368;
-    unsigned char m_nUserTrackPlayMode;  // was field_36C
+    unsigned char m_nUserTrackPlayMode;
     char field_36D[3];
 
     bool IsVehicleRadioActive();
