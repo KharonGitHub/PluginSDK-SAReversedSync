@@ -17,7 +17,7 @@ struct PLUGIN_API tRadioSettings {
     int m_djIndex[4];
     int field_10;
     int m_trackId;
-    int field_18;
+    int m_nextTrackId;
     int m_trackPlayTime;
     int m_trackLength;
     char trackFlags;
@@ -33,7 +33,7 @@ struct PLUGIN_API tRadioSettings {
 VALIDATE_OFFSET(tRadioSettings, m_djIndex, 0x0);
 VALIDATE_OFFSET(tRadioSettings, field_10, 0x10);
 VALIDATE_OFFSET(tRadioSettings, m_trackId, 0x14);
-VALIDATE_OFFSET(tRadioSettings, field_18, 0x18);
+VALIDATE_OFFSET(tRadioSettings, m_nextTrackId, 0x18);
 VALIDATE_OFFSET(tRadioSettings, m_trackPlayTime, 0x1C);
 VALIDATE_OFFSET(tRadioSettings, m_trackLength, 0x20);
 VALIDATE_OFFSET(tRadioSettings, trackFlags, 0x24);
