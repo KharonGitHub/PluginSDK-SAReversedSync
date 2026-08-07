@@ -14,37 +14,41 @@
 #include "enums\eBassSetting.h"
 
 struct PLUGIN_API tRadioSettings {
-    int m_djIndex[4];
-    int field_10;
-    int m_trackId;
-    int m_nextTrackId;
-    int m_trackPlayTime;
-    int m_trackLength;
-    char trackFlags;
-    char m_nCurrentRadioStation;
-    char m_nBassSet;
-    char _pad;
-    float m_fBassGain;
-    char m_currRadioBC[4];
-    char field_30;
-    char prevTrackType;
-    char m_musicTrackIndices[10];
+    int m_trackQueue[5];
+    int m_currTrackId;
+    int m_prevTrackId;
+    int m_playTime;
+    int m_trackLengthMs;
+    unsigned char m_trackFlags;
+    unsigned char m_stationId;
+    unsigned char m_bassSetting;
+    unsigned char _pad1;
+    float m_bassGain;
+    unsigned char m_trackTypes[5];
+    unsigned char m_currTrackType;
+    unsigned char m_prevTrackType;
+    unsigned char m_trackIndices[5];
+    unsigned char m_currTrackIdx;
+    unsigned char m_prevTrackIdx;
+    unsigned char _pad2[2];
 };
-VALIDATE_OFFSET(tRadioSettings, m_djIndex, 0x0);
-VALIDATE_OFFSET(tRadioSettings, field_10, 0x10);
-VALIDATE_OFFSET(tRadioSettings, m_trackId, 0x14);
-VALIDATE_OFFSET(tRadioSettings, m_nextTrackId, 0x18);
-VALIDATE_OFFSET(tRadioSettings, m_trackPlayTime, 0x1C);
-VALIDATE_OFFSET(tRadioSettings, m_trackLength, 0x20);
-VALIDATE_OFFSET(tRadioSettings, trackFlags, 0x24);
-VALIDATE_OFFSET(tRadioSettings, m_nCurrentRadioStation, 0x25);
-VALIDATE_OFFSET(tRadioSettings, m_nBassSet, 0x26);
-VALIDATE_OFFSET(tRadioSettings, _pad, 0x27);
-VALIDATE_OFFSET(tRadioSettings, m_fBassGain, 0x28);
-VALIDATE_OFFSET(tRadioSettings, m_currRadioBC, 0x2C);
-VALIDATE_OFFSET(tRadioSettings, field_30, 0x30);
-VALIDATE_OFFSET(tRadioSettings, prevTrackType, 0x31);
-VALIDATE_OFFSET(tRadioSettings, m_musicTrackIndices, 0x32);
+
+VALIDATE_OFFSET(tRadioSettings, m_trackQueue, 0x00);
+VALIDATE_OFFSET(tRadioSettings, m_currTrackId, 0x14);
+VALIDATE_OFFSET(tRadioSettings, m_prevTrackId, 0x18);
+VALIDATE_OFFSET(tRadioSettings, m_playTime, 0x1C);
+VALIDATE_OFFSET(tRadioSettings, m_trackLengthMs, 0x20);
+VALIDATE_OFFSET(tRadioSettings, m_trackFlags, 0x24);
+VALIDATE_OFFSET(tRadioSettings, m_stationId, 0x25);
+VALIDATE_OFFSET(tRadioSettings, m_bassSetting, 0x26);
+VALIDATE_OFFSET(tRadioSettings, _pad1, 0x27);
+VALIDATE_OFFSET(tRadioSettings, m_bassGain, 0x28);
+VALIDATE_OFFSET(tRadioSettings, m_trackTypes, 0x2C);
+VALIDATE_OFFSET(tRadioSettings, m_currTrackType, 0x31);
+VALIDATE_OFFSET(tRadioSettings, m_prevTrackType, 0x32);
+VALIDATE_OFFSET(tRadioSettings, m_trackIndices, 0x33);
+VALIDATE_OFFSET(tRadioSettings, m_currTrackIdx, 0x38);
+VALIDATE_OFFSET(tRadioSettings, m_prevTrackIdx, 0x39);
 VALIDATE_SIZE(tRadioSettings, 0x3C);
 
 struct PLUGIN_API tRadioStationData {

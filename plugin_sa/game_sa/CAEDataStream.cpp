@@ -10,42 +10,33 @@
 
 #include "CAEDataStream.h"
 
-// Constructor - Address: 0x4DC620
 CAEDataStream::CAEDataStream(int trackId, char* filename, unsigned int startPosition, unsigned int length, bool encrypted) {
     plugin::CallMethod<0x4DC620, CAEDataStream*, int, char*, unsigned int, unsigned int, bool>(this, trackId, filename, startPosition, length, encrypted);
 }
 
-// Destructor - Address: 0x4DC490
 CAEDataStream::~CAEDataStream() {
     plugin::CallMethod<0x4DC490, CAEDataStream*>(this);
 }
 
-// Initialise - Address: 0x4DC2B0
 bool CAEDataStream::Initialise() {
     return plugin::CallMethodAndReturn<bool, 0x4DC2B0, CAEDataStream*>(this);
 }
 
-// FillBuffer - Address: 0x4DC1C0
 unsigned int CAEDataStream::FillBuffer(void* dest, unsigned int size) {
     return plugin::CallMethodAndReturn<unsigned int, 0x4DC1C0, CAEDataStream*, void*, unsigned int>(this, dest, size);
 }
 
-// GetCurrentPosition - Address: 0x4DC230
 unsigned int CAEDataStream::GetCurrentPosition() {
     return plugin::CallMethodAndReturn<unsigned int, 0x4DC230, CAEDataStream*>(this);
 }
 
-// Seek (Native) - Address: 0x4DC250
 unsigned int CAEDataStream::Seek(long offset, int whence) {
     return plugin::CallMethodAndReturn<unsigned int, 0x4DC250, CAEDataStream*, long, int>(this, offset, whence);
 }
 
-// Close - Address: 0x4DC290
 bool CAEDataStream::Close() {
     return plugin::CallMethodAndReturn<bool, 0x4DC290, CAEDataStream*>(this);
 }
-
-// --- IStream COM Method Wrappers ---
 
 HRESULT STDMETHODCALLTYPE CAEDataStream::QueryInterface(REFIID riid, void** objout) {
     return plugin::CallMethodAndReturn<HRESULT, 0x4DC410, CAEDataStream*, REFIID, void**>(this, riid, objout);
