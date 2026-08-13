@@ -30,7 +30,7 @@ struct PLUGIN_API tRadioSettings {
     unsigned char m_trackIndices[5];
     unsigned char m_currTrackIdx;
     unsigned char m_prevTrackIdx;
-    unsigned char _pad2[2];
+    unsigned char _pad[2];
 };
 
 VALIDATE_OFFSET(tRadioSettings, m_trackQueue, 0x00);
@@ -62,20 +62,6 @@ struct PLUGIN_API tRadioStationData {
     char m_nGameClockDays;
     int m_nGameClockHours;
 };
-VALIDATE_OFFSET(tRadioStationData, field_0, 0x0);
-VALIDATE_OFFSET(tRadioStationData, field_4, 0x4);
-VALIDATE_OFFSET(tRadioStationData, field_8, 0x8);
-VALIDATE_OFFSET(tRadioStationData, m_nTimeRetuneStopped, 0xC);
-VALIDATE_OFFSET(tRadioStationData, m_lastPlayingTime, 0x10);
-VALIDATE_OFFSET(tRadioStationData, m_trackPlayTime, 0x14);
-VALIDATE_OFFSET(tRadioStationData, field_18, 0x18);
-VALIDATE_OFFSET(tRadioStationData, field_1C, 0x1C);
-VALIDATE_OFFSET(tRadioStationData, field_20, 0x20);
-VALIDATE_OFFSET(tRadioStationData, field_24, 0x24);
-VALIDATE_OFFSET(tRadioStationData, field_25, 0x25);
-VALIDATE_OFFSET(tRadioStationData, field_26, 0x26);
-VALIDATE_OFFSET(tRadioStationData, m_lastGameClockDays, 0x27);
-VALIDATE_OFFSET(tRadioStationData, m_lastGameClockHours, 0x28);
 VALIDATE_OFFSET(tRadioStationData, m_aElapsed, 0x0);
 VALIDATE_OFFSET(tRadioStationData, m_iTimeInPauseModeInMs, 0xC);
 VALIDATE_OFFSET(tRadioStationData, m_iTimeInMs, 0x10);
