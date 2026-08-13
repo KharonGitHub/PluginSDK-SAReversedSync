@@ -49,23 +49,18 @@ VALIDATE_OFFSET(tRadioSettings, m_prevTrackType, 0x32);
 VALIDATE_OFFSET(tRadioSettings, m_trackIndices, 0x33);
 VALIDATE_OFFSET(tRadioSettings, m_currTrackIdx, 0x38);
 VALIDATE_OFFSET(tRadioSettings, m_prevTrackIdx, 0x39);
+VALIDATE_OFFSET(tRadioSettings, _pad, 0x3A);
 VALIDATE_SIZE(tRadioSettings, 0x3C);
 
 struct PLUGIN_API tRadioStationData {
-    int field_0;
-    int field_4;
-    int field_8;
-    int m_nTimeRetuneStopped;
-    int m_lastPlayingTime;
-    int m_trackPlayTime;
-    int field_18;
-    int field_1C;
-    int field_20;
-    char field_24;
-    char field_25;
-    char field_26;
-    char m_lastGameClockDays;
-    int m_lastGameClockHours;
+    int m_aElapsed[3];
+    int m_iTimeInPauseModeInMs;
+    int m_iTimeInMs;
+    int m_iTrackPlayTime;
+    int m_aTrackQueue[3];
+    char m_aTrackTypes[3];
+    char m_nGameClockDays;
+    int m_nGameClockHours;
 };
 VALIDATE_OFFSET(tRadioStationData, field_0, 0x0);
 VALIDATE_OFFSET(tRadioStationData, field_4, 0x4);
@@ -81,6 +76,14 @@ VALIDATE_OFFSET(tRadioStationData, field_25, 0x25);
 VALIDATE_OFFSET(tRadioStationData, field_26, 0x26);
 VALIDATE_OFFSET(tRadioStationData, m_lastGameClockDays, 0x27);
 VALIDATE_OFFSET(tRadioStationData, m_lastGameClockHours, 0x28);
+VALIDATE_OFFSET(tRadioStationData, m_aElapsed, 0x0);
+VALIDATE_OFFSET(tRadioStationData, m_iTimeInPauseModeInMs, 0xC);
+VALIDATE_OFFSET(tRadioStationData, m_iTimeInMs, 0x10);
+VALIDATE_OFFSET(tRadioStationData, m_iTrackPlayTime, 0x14);
+VALIDATE_OFFSET(tRadioStationData, m_aTrackQueue, 0x18);
+VALIDATE_OFFSET(tRadioStationData, m_aTrackTypes, 0x24);
+VALIDATE_OFFSET(tRadioStationData, m_nGameClockDays, 0x27);
+VALIDATE_OFFSET(tRadioStationData, m_nGameClockHours, 0x28);
 VALIDATE_SIZE(tRadioStationData, 0x2C);
 
 struct PLUGIN_API tMusicTrackHistory {
@@ -213,5 +216,4 @@ VALIDATE_OFFSET(CAERadioTrackManager, m_nUserTrackPlayMode, 0x36C);
 VALIDATE_OFFSET(CAERadioTrackManager, field_36D, 0x36D);
 VALIDATE_SIZE(CAERadioTrackManager, 0x370);
 
-extern CAERadioTrackManager &AERadioTrackManager;
-VALIDATE_SIZE(CAERadioTrackManager, 0x370);
+extern CAERadioTrackManager& AERadioTrackManager;
