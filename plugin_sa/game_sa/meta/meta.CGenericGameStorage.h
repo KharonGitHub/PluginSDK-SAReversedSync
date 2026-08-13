@@ -37,10 +37,10 @@ META_BEGIN(CGenericGameStorage::OpenFileForReading)
     using refs_t = RefList<
         0x5D118B, GAME_10US_COMPACT, H_CALL, 0x5D1170, 1,
         0x5D17D4, GAME_10US_COMPACT, H_CALL, 0x5D17B0, 1>;
-    using def_t = bool(char *, unsigned int *);
+    using def_t = bool(const char*, int);
     static const int cb_priority = PRIORITY_BEFORE; 
     using calling_convention_t = CallingConventions::Cdecl;
-    using args_t = ArgPick<ArgTypes<char *,unsigned int *>, 0,1>;
+    using args_t = ArgPick<ArgTypes<const char*, int>, 0, 1>;
 META_END
 
 META_BEGIN(CGenericGameStorage::OpenFileForWriting)
@@ -158,13 +158,13 @@ META_BEGIN(CGenericGameStorage::CheckDataNotCorrupt)
     using refs_t = RefList<
         0x5D13A4, GAME_10US_COMPACT, H_CALL, 0x5D1380, 1,
         0x61925C, GAME_10US_COMPACT, H_CALL, 0x619140, 1>;
-    using def_t = bool(int, char *);
+    using def_t = bool(int, const char*);
     static const int cb_priority = PRIORITY_BEFORE; 
     using calling_convention_t = CallingConventions::Cdecl;
-    using args_t = ArgPick<ArgTypes<int,char *>, 0,1>;
+    using args_t = ArgPick<ArgTypes<int, const char*>, 0, 1>;
 META_END
 
-META_BEGIN(CGenericGameStorage::_SaveDataToWorkBuffer)
+META_BEGIN(CGenericGameStorage::SaveDataToWorkBuffer)
     static int address;
     static int global_address;
     static const int id = 0x5D1270;
@@ -355,7 +355,7 @@ META_BEGIN(CGenericGameStorage::_SaveDataToWorkBuffer)
     using args_t = ArgPick<ArgTypes<void *,int>, 0,1>;
 META_END
 
-META_BEGIN(CGenericGameStorage::_LoadDataFromWorkBuffer)
+META_BEGIN(CGenericGameStorage::LoadDataFromWorkBuffer)
     static int address;
     static int global_address;
     static const int id = 0x5D1300;
@@ -554,10 +554,10 @@ META_BEGIN(CGenericGameStorage::CheckSlotDataValid)
     // total references count: 10us (1), 10ushl (0), 10eu (0), 11us (0), 11eu (0), sr2 (0), sr2lv (0)
     using refs_t = RefList<
         0x578EF2, GAME_10US_COMPACT, H_CALL, 0x578D60, 1>;
-    using def_t = bool(int, bool);
+    using def_t = bool(int);
     static const int cb_priority = PRIORITY_BEFORE; 
     using calling_convention_t = CallingConventions::Cdecl;
-    using args_t = ArgPick<ArgTypes<int,bool>, 0,1>;
+    using args_t = ArgPick<ArgTypes<int>, 0>;
 META_END
 
 META_BEGIN(CGenericGameStorage::GenericSave)
@@ -570,10 +570,10 @@ META_BEGIN(CGenericGameStorage::GenericSave)
     // total references count: 10us (1), 10ushl (0), 10eu (0), 11us (0), 11eu (0), sr2 (0), sr2lv (0)
     using refs_t = RefList<
         0x619081, GAME_10US_COMPACT, H_CALL, 0x619060, 1>;
-    using def_t = bool(int);
+    using def_t = bool();
     static const int cb_priority = PRIORITY_BEFORE; 
     using calling_convention_t = CallingConventions::Cdecl;
-    using args_t = ArgPick<ArgTypes<int>, 0>;
+    using args_t = ArgPick<ArgTypes<>>;
 META_END
 
 META_BEGIN(CGenericGameStorage::GenericLoad)
@@ -586,10 +586,10 @@ META_BEGIN(CGenericGameStorage::GenericLoad)
     // total references count: 10us (1), 10ushl (0), 10eu (0), 11us (0), 11eu (0), sr2 (0), sr2lv (0)
     using refs_t = RefList<
         0x53C70B, GAME_10US_COMPACT, H_CALL, 0x53C680, 1>;
-    using def_t = bool(bool *);
+    using def_t = bool(bool&);
     static const int cb_priority = PRIORITY_BEFORE; 
     using calling_convention_t = CallingConventions::Cdecl;
-    using args_t = ArgPick<ArgTypes<bool *>, 0>;
+    using args_t = ArgPick<ArgTypes<bool&>, 0>;
 META_END
 
 META_BEGIN(CGenericGameStorage::InitRadioStationPositionList)
@@ -680,7 +680,7 @@ META_BEGIN(CGenericGameStorage::RestoreForStartLoad)
     // total references count: 10us (1), 10ushl (0), 10eu (0), 11us (0), 11eu (0), sr2 (0), sr2lv (0)
     using refs_t = RefList<
         0x53C6D1, GAME_10US_COMPACT, H_CALL, 0x53C680, 1>;
-    using def_t = char();
+    using def_t = bool();
     static const int cb_priority = PRIORITY_BEFORE; 
     using calling_convention_t = CallingConventions::Cdecl;
     using args_t = ArgPick<ArgTypes<>>;

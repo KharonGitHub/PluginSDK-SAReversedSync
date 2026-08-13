@@ -3,6 +3,10 @@
     Authors: GTA Community. See more here
     https://github.com/DK22Pac/plugin-sdk
     Do not delete this comment block. Respect others' work!
+
+    Based on definitions from the GTA SA Reversed project.
+    https://github.com/gta-reversed/gta-reversed
+    Do not delete this comment block. Respect others' work!
 */
 #include "CGenericGameStorage.h"
 
@@ -14,9 +18,10 @@ char *CGenericGameStorage::ms_SaveFileNameJustSaved = reinterpret_cast<char *>(G
 int &CGenericGameStorage::ms_CheckSum = *reinterpret_cast<int *>(GLOBAL_ADDRESS_BY_VERSION(0xC16134, 0, 0, 0, 0, 0));
 tSlotSaveDate *CGenericGameStorage::ms_SlotSaveDate = reinterpret_cast<tSlotSaveDate *>(GLOBAL_ADDRESS_BY_VERSION(0xC16138, 0, 0, 0, 0, 0));
 tSlotFileName *CGenericGameStorage::ms_SlotFileName = reinterpret_cast<tSlotFileName *>(GLOBAL_ADDRESS_BY_VERSION(0xC16368, 0, 0, 0, 0, 0));
-char *CGenericGameStorage::ms_ValidSaveName = reinterpret_cast<char *>(GLOBAL_ADDRESS_BY_VERSION(0xC16DB8, 0, 0, 0, 0, 0));
-int *CGenericGameStorage::ms_Slots = reinterpret_cast<int *>(GLOBAL_ADDRESS_BY_VERSION(0xC16EB8, 0, 0, 0, 0, 0));
+char *CGenericGameStorage::ms_SaveFileName = reinterpret_cast<char *>(GLOBAL_ADDRESS_BY_VERSION(0xC16DB8, 0, 0, 0, 0, 0));
+eSlotState *CGenericGameStorage::ms_Slots = reinterpret_cast<eSlotState *>(GLOBAL_ADDRESS_BY_VERSION(0xC16EBC, 0, 0, 0, 0, 0));
 void *&CGenericGameStorage::ms_WorkBuffer = *reinterpret_cast<void **>(GLOBAL_ADDRESS_BY_VERSION(0xC16EE8, 0, 0, 0, 0, 0));
+unsigned int &CGenericGameStorage::ms_WorkBufferSize = *reinterpret_cast<unsigned int*>(GLOBAL_ADDRESS_BY_VERSION(0x8D2BE0, 0, 0, 0, 0, 0));
 int &CGenericGameStorage::ms_WorkBufferPos = *reinterpret_cast<int *>(GLOBAL_ADDRESS_BY_VERSION(0xC16EEC, 0, 0, 0, 0, 0));
 FILE *&CGenericGameStorage::ms_FileHandle = *reinterpret_cast<FILE **>(GLOBAL_ADDRESS_BY_VERSION(0xC16EF0, 0, 0, 0, 0, 0));
 int &CGenericGameStorage::ms_FilePos = *reinterpret_cast<int *>(GLOBAL_ADDRESS_BY_VERSION(0xC16EF4, 0, 0, 0, 0, 0));
@@ -27,15 +32,15 @@ bool &CGenericGameStorage::ms_bLoading = *reinterpret_cast<bool *>(GLOBAL_ADDRES
 int addrof(CGenericGameStorage::CheckDataNotCorrupt) = ADDRESS_BY_VERSION(0x5D1170, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::CheckDataNotCorrupt) = GLOBAL_ADDRESS_BY_VERSION(0x5D1170, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::CheckDataNotCorrupt(int saveID, char *saveGameFilename) {
-    return plugin::CallAndReturnDynGlobal<bool, int, char *>(gaddrof(CGenericGameStorage::CheckDataNotCorrupt), saveID, saveGameFilename);
+bool CGenericGameStorage::CheckDataNotCorrupt(int slot, const char* fileName) {
+    return plugin::CallAndReturnDynGlobal<bool, int, const char*>(gaddrof(CGenericGameStorage::CheckDataNotCorrupt), slot, fileName);
 }
 
 int addrof(CGenericGameStorage::CheckSlotDataValid) = ADDRESS_BY_VERSION(0x5D1380, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::CheckSlotDataValid) = GLOBAL_ADDRESS_BY_VERSION(0x5D1380, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::CheckSlotDataValid(int saveID, bool unused) {
-    return plugin::CallAndReturnDynGlobal<bool, int, bool>(gaddrof(CGenericGameStorage::CheckSlotDataValid), saveID, unused);
+bool CGenericGameStorage::CheckSlotDataValid(int slot) {
+    return plugin::CallAndReturnDynGlobal<bool, int>(gaddrof(CGenericGameStorage::CheckSlotDataValid), slot);
 }
 
 int addrof(CGenericGameStorage::DoGameSpecificStuffAfterSucessLoad) = ADDRESS_BY_VERSION(0x618E90, 0, 0, 0, 0, 0);
@@ -55,15 +60,15 @@ void CGenericGameStorage::DoGameSpecificStuffBeforeSave() {
 int addrof(CGenericGameStorage::GenericLoad) = ADDRESS_BY_VERSION(0x5D17B0, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::GenericLoad) = GLOBAL_ADDRESS_BY_VERSION(0x5D17B0, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::GenericLoad(bool *arg1) {
-    return plugin::CallAndReturnDynGlobal<bool, bool *>(gaddrof(CGenericGameStorage::GenericLoad), arg1);
+bool CGenericGameStorage::GenericLoad(bool& outVariablesLoaded) {
+    return plugin::CallAndReturnDynGlobal<bool, bool&>(gaddrof(CGenericGameStorage::GenericLoad), outVariablesLoaded);
 }
 
 int addrof(CGenericGameStorage::GenericSave) = ADDRESS_BY_VERSION(0x5D13E0, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::GenericSave) = GLOBAL_ADDRESS_BY_VERSION(0x5D13E0, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::GenericSave(int unused) {
-    return plugin::CallAndReturnDynGlobal<bool, int>(gaddrof(CGenericGameStorage::GenericSave), unused);
+bool CGenericGameStorage::GenericSave() {
+    return plugin::CallAndReturnDynGlobal<bool>(gaddrof(CGenericGameStorage::GenericSave));
 }
 
 int addrof(CGenericGameStorage::GetCurrentVersionNumber) = ADDRESS_BY_VERSION(0x5D0F50, 0, 0, 0, 0, 0);
@@ -125,8 +130,8 @@ void CGenericGameStorage::MakeValidSaveName(int saveNum) {
 int addrof(CGenericGameStorage::OpenFileForReading) = ADDRESS_BY_VERSION(0x5D0D20, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::OpenFileForReading) = GLOBAL_ADDRESS_BY_VERSION(0x5D0D20, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::OpenFileForReading(char *saveGameFilename, unsigned int *saveID) {
-    return plugin::CallAndReturnDynGlobal<bool, char *, unsigned int *>(gaddrof(CGenericGameStorage::OpenFileForReading), saveGameFilename, saveID);
+bool CGenericGameStorage::OpenFileForReading(const char* fileName, int slot) {
+    return plugin::CallAndReturnDynGlobal<bool, const char*, int>(gaddrof(CGenericGameStorage::OpenFileForReading), fileName, slot);
 }
 
 int addrof(CGenericGameStorage::OpenFileForWriting) = ADDRESS_BY_VERSION(0x5D0DD0, 0, 0, 0, 0, 0);
@@ -140,33 +145,37 @@ int addrof(CGenericGameStorage::ReportError) = ADDRESS_BY_VERSION(0x5D08C0, 0, 0
 int gaddrof(CGenericGameStorage::ReportError) = GLOBAL_ADDRESS_BY_VERSION(0x5D08C0, 0, 0, 0, 0, 0);
 
 void CGenericGameStorage::ReportError(eSaveLoadBlocks block, eSaveLoadError errorType) {
-    plugin::CallDynGlobal<eSaveLoadBlocks, eSaveLoadError>(gaddrof(CGenericGameStorage::ReportError),block,errorType);
+    plugin::CallDynGlobal<eSaveLoadBlocks, eSaveLoadError>(gaddrof(CGenericGameStorage::ReportError), block, errorType);
 }
 
 int addrof(CGenericGameStorage::RestoreForStartLoad) = ADDRESS_BY_VERSION(0x619000, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::RestoreForStartLoad) = GLOBAL_ADDRESS_BY_VERSION(0x619000, 0, 0, 0, 0, 0);
 
-char CGenericGameStorage::RestoreForStartLoad() {
-    return plugin::CallAndReturnDynGlobal<char>(gaddrof(CGenericGameStorage::RestoreForStartLoad));
+bool CGenericGameStorage::RestoreForStartLoad() {
+    return plugin::CallAndReturnDynGlobal<bool>(gaddrof(CGenericGameStorage::RestoreForStartLoad));
 }
 
 int addrof(CGenericGameStorage::SaveWorkBuffer) = ADDRESS_BY_VERSION(0x5D0F80, 0, 0, 0, 0, 0);
 int gaddrof(CGenericGameStorage::SaveWorkBuffer) = GLOBAL_ADDRESS_BY_VERSION(0x5D0F80, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::SaveWorkBuffer(bool a1) {
-    return plugin::CallAndReturnDynGlobal<bool, bool>(gaddrof(CGenericGameStorage::SaveWorkBuffer), a1);
+bool CGenericGameStorage::SaveWorkBuffer(bool includeChecksum) {
+    return plugin::CallAndReturnDynGlobal<bool, bool>(gaddrof(CGenericGameStorage::SaveWorkBuffer), includeChecksum);
 }
 
-int addrof(CGenericGameStorage::_LoadDataFromWorkBuffer) = ADDRESS_BY_VERSION(0x5D1300, 0, 0, 0, 0, 0);
-int gaddrof(CGenericGameStorage::_LoadDataFromWorkBuffer) = GLOBAL_ADDRESS_BY_VERSION(0x5D1300, 0, 0, 0, 0, 0);
+int addrof(CGenericGameStorage::LoadDataFromWorkBuffer) = ADDRESS_BY_VERSION(0x5D1300, 0, 0, 0, 0, 0);
+int gaddrof(CGenericGameStorage::LoadDataFromWorkBuffer) = GLOBAL_ADDRESS_BY_VERSION(0x5D1300, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::_LoadDataFromWorkBuffer(void *pData, int size) {
-    return plugin::CallAndReturnDynGlobal<bool, void *, int>(gaddrof(CGenericGameStorage::_LoadDataFromWorkBuffer), pData, size);
+bool CGenericGameStorage::LoadDataFromWorkBuffer(void *data, int size) {
+    return plugin::CallAndReturnDynGlobal<bool, void *, int>(gaddrof(CGenericGameStorage::LoadDataFromWorkBuffer), data, size);
 }
 
-int addrof(CGenericGameStorage::_SaveDataToWorkBuffer) = ADDRESS_BY_VERSION(0x5D1270, 0, 0, 0, 0, 0);
-int gaddrof(CGenericGameStorage::_SaveDataToWorkBuffer) = GLOBAL_ADDRESS_BY_VERSION(0x5D1270, 0, 0, 0, 0, 0);
+int addrof(CGenericGameStorage::SaveDataToWorkBuffer) = ADDRESS_BY_VERSION(0x5D1270, 0, 0, 0, 0, 0);
+int gaddrof(CGenericGameStorage::SaveDataToWorkBuffer) = GLOBAL_ADDRESS_BY_VERSION(0x5D1270, 0, 0, 0, 0, 0);
 
-bool CGenericGameStorage::_SaveDataToWorkBuffer(void *pData, int Size) {
-    return plugin::CallAndReturnDynGlobal<bool, void *, int>(gaddrof(CGenericGameStorage::_SaveDataToWorkBuffer), pData, Size);
+bool CGenericGameStorage::SaveDataToWorkBuffer(void *data, int size) {
+    return plugin::CallAndReturnDynGlobal<bool, void *, int>(gaddrof(CGenericGameStorage::SaveDataToWorkBuffer), data, size);
+}
+
+PLUGIN_API const char* GetSavedGameDateAndTime(int slot) {
+    return plugin::CallAndReturnDynGlobal<const char*, int>(GLOBAL_ADDRESS_BY_VERSION(0x618D00, 0, 0, 0, 0, 0), slot);
 }

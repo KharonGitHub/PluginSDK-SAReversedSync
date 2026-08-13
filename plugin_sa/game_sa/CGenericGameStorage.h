@@ -3,6 +3,10 @@
     Authors: GTA Community. See more here
     https://github.com/DK22Pac/plugin-sdk
     Do not delete this comment block. Respect others' work!
+
+    Based on definitions from the GTA SA Reversed project.
+    https://github.com/gta-reversed/gta-reversed
+    Do not delete this comment block. Respect others' work!
 */
 #pragma once
 
@@ -34,6 +38,8 @@ enum PLUGIN_API eSaveLoadBlocks {
     BLOCK_SHOPPING = 0x16,
     BLOCK_GANGWARS = 0x17,
     BLOCK_STUNTJUMPS = 0x18,
+    BLOCK_ENTRY_EXITS = 0x19,
+    BLOCK_RADIOTRACKS = 0x1A,
     BLOCK_USER3DMARKERS = 0x1B
 };
 
@@ -41,6 +47,13 @@ enum PLUGIN_API eSaveLoadError {
     LOADING_SYNC_ERROR = 0,
     LOADING_ERROR = 0x1,
     SAVING_ERROR = 0x2
+};
+
+enum PLUGIN_API eSlotState {
+    SLOT_FILLED,
+    SLOT_FREE,
+    SLOT_CORRUPTED,
+    SLOT_DATA_OLD,
 };
 
 struct PLUGIN_API tSlotSaveDate {
@@ -63,9 +76,10 @@ public:
     SUPPORTED_10US static int &ms_CheckSum;
     SUPPORTED_10US static tSlotSaveDate *ms_SlotSaveDate; // static tSlotSaveDate ms_SlotSaveDate[8]
     SUPPORTED_10US static tSlotFileName *ms_SlotFileName; // static tSlotFileName ms_SlotFileName[8]
-    SUPPORTED_10US static char *ms_ValidSaveName; // static char ms_ValidSaveName[256]
-    SUPPORTED_10US static int *ms_Slots; // static int ms_Slots[9]
+    SUPPORTED_10US static char *ms_SaveFileName; // static char ms_ValidSaveName[256]
+    SUPPORTED_10US static eSlotState* ms_Slots; // static int ms_Slots[9]
     SUPPORTED_10US static void *&ms_WorkBuffer;
+    SUPPORTED_10US static unsigned int& ms_WorkBufferSize;     // 0x8D2BE0
     SUPPORTED_10US static int &ms_WorkBufferPos;
     SUPPORTED_10US static FILE *&ms_FileHandle;
     SUPPORTED_10US static int &ms_FilePos;
@@ -73,12 +87,12 @@ public:
     SUPPORTED_10US static bool &ms_bFailed;
     SUPPORTED_10US static bool &ms_bLoading;
 
-    SUPPORTED_10US static bool CheckDataNotCorrupt(int saveID, char *saveGameFilename);
-    SUPPORTED_10US static bool CheckSlotDataValid(int saveID, bool unused);
+    SUPPORTED_10US static bool CheckDataNotCorrupt(int slot, const char* fileName);
+    SUPPORTED_10US static bool CheckSlotDataValid(int slot);
     SUPPORTED_10US static void DoGameSpecificStuffAfterSucessLoad();
     SUPPORTED_10US static void DoGameSpecificStuffBeforeSave();
-    SUPPORTED_10US static bool GenericLoad(bool *arg1);
-    SUPPORTED_10US static bool GenericSave(int unused);
+    SUPPORTED_10US static bool GenericLoad(bool& outVariablesLoaded);
+    SUPPORTED_10US static bool GenericSave();
     SUPPORTED_10US static int GetCurrentVersionNumber();
     SUPPORTED_10US static char *GetNameOfSavedGame(int saveID);
     //! unused
@@ -93,15 +107,17 @@ public:
     SUPPORTED_10US static void InitRadioStationPositionList();
     SUPPORTED_10US static bool LoadWorkBuffer();
     SUPPORTED_10US static void MakeValidSaveName(int saveNum);
-    SUPPORTED_10US static bool OpenFileForReading(char *saveGameFilename, unsigned int *saveID);
+    SUPPORTED_10US static bool OpenFileForReading(const char* fileName, int slot);
     SUPPORTED_10US static bool OpenFileForWriting();
     SUPPORTED_10US static void ReportError(eSaveLoadBlocks block, eSaveLoadError errorType);
     //! does nothing (return 0)
-    SUPPORTED_10US static char RestoreForStartLoad();
+    SUPPORTED_10US static bool RestoreForStartLoad();
     SUPPORTED_10US static bool SaveWorkBuffer(bool a1);
-    SUPPORTED_10US static bool _LoadDataFromWorkBuffer(void *pData, int size);
-    SUPPORTED_10US static bool _SaveDataToWorkBuffer(void *pData, int Size);
+    SUPPORTED_10US static bool LoadDataFromWorkBuffer(void *pData, int size);
+    SUPPORTED_10US static bool SaveDataToWorkBuffer(void *pData, int Size);
 };
 VALIDATE_SIZE(CGenericGameStorage, 0x1);
+
+PLUGIN_API const char* GetSavedGameDateAndTime(int slot);
 
 #include "meta/meta.CGenericGameStorage.h"
